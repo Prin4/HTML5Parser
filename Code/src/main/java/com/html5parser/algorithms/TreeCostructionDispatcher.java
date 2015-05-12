@@ -52,10 +52,10 @@ public class TreeCostructionDispatcher {
 		if (adjustedCurrentNode == null
 				|| (adjustedCurrentNode.getNamespaceURI() != null && adjustedCurrentNode
 						.getNamespaceURI().equals(Namespace.HTML))
-				|| (IntegrationPoint
+				|| ((IntegrationPoint
 						.isMathMLTextIntegrationPoint(adjustedCurrentNode)
-						&& currentToken.getType().equals(TokenType.start_tag) && (currentToken
-						.getValue().equals("mglyph") || currentToken.getValue()
+						&& currentToken.getType().equals(TokenType.start_tag)) && (!currentToken
+						.getValue().equals("mglyph") && !currentToken.getValue()
 						.equals("malignmark")))
 				|| (IntegrationPoint
 						.isMathMLTextIntegrationPoint(adjustedCurrentNode) && currentToken

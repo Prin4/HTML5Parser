@@ -72,7 +72,7 @@ public class InSelect implements IInsertionMode {
 			case "optgroup":
 				if (currentNodeName.equals("option"))
 					parserContext.getOpenElements().pop();
-				if (currentNodeName.equals("optgroup"))
+				if (parserContext.getCurrentNode().getNodeName().equals("optgroup"))
 					parserContext.getOpenElements().pop();
 				InsertAnHTMLElement.run(parserContext, token);
 				break;

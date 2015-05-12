@@ -28,6 +28,7 @@ import com.html5parser.classes.Token;
 import com.html5parser.classes.Token.TokenType;
 import com.html5parser.classes.TokenizerState;
 import com.html5parser.classes.token.TagToken;
+import com.html5parser.classes.token.TagToken.Attribute;
 import com.html5parser.constants.HTML5Elements;
 import com.html5parser.constants.Namespace;
 import com.html5parser.factories.InsertionModeFactory;
@@ -92,18 +93,18 @@ public class InBody implements IInsertionMode {
 		 */
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("html")) {
+			
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if (parserContext.openElementsContain("template")) {
-				return parserContext;
-			} else {
-				List<TagToken.Attribute> attriList = ((TagToken) token)
-						.getAttributes();
-				Element topOpenElement = parserContext.getOpenElements().peek();
-				for (int i = 0; i < attriList.size(); i++) {
-					if (!topOpenElement
-							.hasAttribute(attriList.get(i).getName())) {
-						topOpenElement.setAttribute(attriList.get(i).getName(),
-								attriList.get(i).getValue());
+			if(parserContext.openElementsContain("template")
+					){
+				//ignore the token
+			}
+			else{
+				Element html = parserContext.getOpenElements().get(0);
+				TagToken tagToken = (TagToken) token;
+				for(Attribute att : tagToken.getAttributes()){
+					if (!html.hasAttribute(att.getName())){
+						html.setAttribute(att.getName(), att.getValue());
 					}
 				}
 			}
@@ -137,26 +138,21 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("body")) {
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if (parserContext.getOpenElements().size() > 1) {
-				Element top = parserContext.getOpenElements().pop();
-				Element secondTop = parserContext.getOpenElements().peek();
-				parserContext.getOpenElements().push(top);
-				if (!secondTop.getNodeName().equals("body")
-						|| parserContext.openElementsContain("template")) {
-					return parserContext;
-				} else {
-					parserContext.setFlagFramesetOk(false);
-					List<TagToken.Attribute> attriList = ((TagToken) token)
-							.getAttributes();
-					for (int i = 0; i < attriList.size(); i++) {
-						if (!secondTop.hasAttribute(attriList.get(i).getName())) {
-							secondTop.setAttribute(attriList.get(i).getName(),
-									attriList.get(i).getValue());
-						}
+			if(!parserContext.getOpenElements().get(1).getLocalName().equals("body")
+					|| parserContext.getOpenElements().size() == 1
+					|| parserContext.openElementsContain("template")
+					){
+				//ignore the token
+			}
+			else{
+				parserContext.setFlagFramesetOk(false);
+				Element body = parserContext.getOpenElements().get(1);
+				TagToken tagToken = (TagToken) token;
+				for(Attribute att : tagToken.getAttributes()){
+					if (!body.hasAttribute(att.getName())){
+						body.setAttribute(att.getName(), att.getValue());
 					}
 				}
-			} else if (parserContext.getOpenElements().size() == 1) {
-				return parserContext;
 			}
 		}
 		/*
@@ -1288,8 +1284,11 @@ public class InBody implements IInsertionMode {
 			AdjustMathMLAttributes.run((TagToken) token);
 			AdjustForeignAttributes.run((TagToken) token);
 			InsertForeignElement.run(parserContext, token, Namespace.MathML);
-			parserContext.getOpenElements().pop();
-			((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
+			if(((TagToken) token).isFlagSelfClosingTag()){
+				parserContext.getOpenElements().pop();
+				((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
+			}
+			
 		}
 		/*
 		 * A start tag whose tag name is "svg" Reconstruct the active formatting

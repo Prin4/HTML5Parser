@@ -27,9 +27,9 @@ public class Script_data_end_tag_name_state implements ITokenizerState {
 		case FF:
 		case SPACE:
 			/*
-			 * If the current end tag token is an appropriate end tag token, 
-			 * then switch to the before attribute name state. 
-			 * Otherwise, treat it as per the "anything else" entry below.
+			 * If the current end tag token is an appropriate end tag token,
+			 * then switch to the before attribute name state. Otherwise, treat
+			 * it as per the "anything else" entry below.
 			 */
 			if (currentToken.getValue().equals(
 					tokenizerContext.getLatestEmittedStartTag())) {
@@ -70,19 +70,28 @@ public class Script_data_end_tag_name_state implements ITokenizerState {
 			break;
 		case LATIN_CAPITAL_LETTER:
 			/*
-			 * change it to lower case
+			 * Append the lowercase version of the current input character (add
+			 * 0x0020 to the character's code point) to the current tag token's
+			 * tag name. Append the current input character to the temporary
+			 * buffer.
 			 */
-			currentChar += 0x0020;
+			currentToken.setValue(currentToken.getValue().concat(
+					String.valueOf(Character.toChars(currentChar + 0x0020))));
+			tokenizerContext.setTemporaryBuffer(tokenizerContext
+					.getTemporaryBuffer().concat(
+							String.valueOf(Character.toChars(currentChar))));
+			break;
 
 		case LATIN_SMALL_LETTER:
 			/*
-			 * Append the current input character to the current tag token's tag name. 
-			 * Append the current input character to the temporary buffer.
+			 * Append the current input character to the current tag token's tag
+			 * name. Append the current input character to the temporary buffer.
 			 */
 			currentToken.setValue(currentToken.getValue().concat(
 					String.valueOf(Character.toChars(currentChar))));
-			tokenizerContext.setTemporaryBuffer(tokenizerContext.getTemporaryBuffer().concat(
-					String.valueOf(Character.toChars(currentChar))));
+			tokenizerContext.setTemporaryBuffer(tokenizerContext
+					.getTemporaryBuffer().concat(
+							String.valueOf(Character.toChars(currentChar))));
 			break;
 		default:
 			defaultProcess(tokenizerContext);
@@ -95,10 +104,10 @@ public class Script_data_end_tag_name_state implements ITokenizerState {
 	}
 
 	/*
-	 * Switch to the script data state. Emit a U+003C LESS-THAN SIGN character token,
-	 * a U+002F SOLIDUS character token, and a character token for each of the
-	 * characters in the temporary buffer (in the order they were added to the
-	 * buffer). Reconsume the current input character.
+	 * Switch to the script data state. Emit a U+003C LESS-THAN SIGN character
+	 * token, a U+002F SOLIDUS character token, and a character token for each
+	 * of the characters in the temporary buffer (in the order they were added
+	 * to the buffer). Reconsume the current input character.
 	 */
 	private void defaultProcess(TokenizerContext tokenizerContext) {
 		TokenizerStateFactory factory = TokenizerStateFactory.getInstance();

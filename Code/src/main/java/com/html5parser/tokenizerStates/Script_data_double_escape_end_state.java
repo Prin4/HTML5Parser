@@ -2,6 +2,8 @@ package com.html5parser.tokenizerStates;
 
 import com.html5parser.classes.ASCIICharacter;
 import com.html5parser.classes.ParserContext;
+import com.html5parser.classes.Token;
+import com.html5parser.classes.Token.TokenType;
 import com.html5parser.classes.TokenizerContext;
 import com.html5parser.classes.TokenizerState;
 import com.html5parser.factories.TokenizerStateFactory;
@@ -39,7 +41,7 @@ public class Script_data_double_escape_end_state implements ITokenizerState {
 						.setNextState(factory
 								.getState(TokenizerState.Script_data_double_escaped_state));
 			}
-			tokenizerContext.setFlagEmitToken(true);
+			tokenizerContext.emitCurrentToken(new Token(TokenType.character, currentChar));
 			break;
 		case LATIN_CAPITAL_LETTER:
 			/*
@@ -55,7 +57,7 @@ public class Script_data_double_escape_end_state implements ITokenizerState {
 			tokenizerContext.setTemporaryBuffer(tokenizerContext
 					.getTemporaryBuffer().concat(
 							String.valueOf(Character.toChars(currentChar))));
-			tokenizerContext.setFlagEmitToken(true);
+			tokenizerContext.emitCurrentToken(new Token(TokenType.character, currentChar));
 			break;
 		default:
 			/*

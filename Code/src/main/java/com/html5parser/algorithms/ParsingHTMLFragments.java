@@ -26,6 +26,7 @@ import com.html5parser.classes.TokenizerContext;
 import com.html5parser.classes.TokenizerState;
 import com.html5parser.classes.Token.TokenType;
 import com.html5parser.classes.token.TagToken;
+import com.html5parser.constants.Namespace;
 import com.html5parser.factories.InsertionModeFactory;
 import com.html5parser.factories.TokenizerStateFactory;
 import com.html5parser.parser.Parser;
@@ -122,7 +123,7 @@ public class ParsingHTMLFragments {
 		}
 
 		// Let root be a new html element with no attributes.
-		Element root = document.createElement("html");
+		Element root = document.createElementNS(Namespace.HTML,"html");
 
 		// Append the element root to the Document node created above.
 		document.appendChild(root);

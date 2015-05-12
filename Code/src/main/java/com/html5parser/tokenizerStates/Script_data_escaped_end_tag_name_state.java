@@ -114,7 +114,7 @@ public class Script_data_escaped_end_tag_name_state implements ITokenizerState{
 		for (int i = 0; i < temporaryBuffer.length(); i++) {
 			char a = temporaryBuffer.charAt(i);
 			tokenizerContext.emitCurrentToken(new Token(TokenType.character,
-					String.valueOf(a)));
+					String.valueOf(Character.toChars(a))));
 		}
 		tokenizerContext.setFlagReconsumeCurrentInputCharacter(true);
 	}

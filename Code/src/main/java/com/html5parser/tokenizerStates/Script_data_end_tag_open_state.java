@@ -28,10 +28,17 @@ public class Script_data_end_tag_open_state implements ITokenizerState{
 			 * Finally, switch to the script data end tag name state. 
 			 * (Don't emit the token yet; further details will be filled in before it is emitted.)
 			 */
-			currentChar += 0x0020;
-		case LATIN_SMALL_LETTER:
-			String addedChar = String.valueOf(Character.toChars(currentChar));
+			String addedChar = String.valueOf(Character.toChars(currentChar + 0x0020));
 			Token token = new Token(TokenType.end_tag, addedChar);
+			tokenizerContext.setTemporaryBuffer(tokenizerContext.getTemporaryBuffer().concat(
+					String.valueOf(Character.toChars(currentChar))));
+			tokenizerContext.setCurrentToken(token);
+			tokenizerContext.setNextState(factory
+					.getState(TokenizerState.Script_data_end_tag_name_state));
+			break;
+		case LATIN_SMALL_LETTER:
+			 addedChar = String.valueOf(Character.toChars(currentChar));
+			token = new Token(TokenType.end_tag, addedChar);
 			tokenizerContext.setTemporaryBuffer(tokenizerContext.getTemporaryBuffer().concat(
 					String.valueOf(Character.toChars(currentChar))));
 			tokenizerContext.setCurrentToken(token);
