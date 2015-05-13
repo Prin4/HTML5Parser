@@ -93,17 +93,15 @@ public class InBody implements IInsertionMode {
 		 */
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("html")) {
-			
+
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if(parserContext.openElementsContain("template")
-					){
-				//ignore the token
-			}
-			else{
+			if (parserContext.openElementsContain("template")) {
+				// ignore the token
+			} else {
 				Element html = parserContext.getOpenElements().get(0);
 				TagToken tagToken = (TagToken) token;
-				for(Attribute att : tagToken.getAttributes()){
-					if (!html.hasAttribute(att.getName())){
+				for (Attribute att : tagToken.getAttributes()) {
+					if (!html.hasAttribute(att.getName())) {
 						html.setAttribute(att.getName(), att.getValue());
 					}
 				}
@@ -138,18 +136,17 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("body")) {
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if(!parserContext.getOpenElements().get(1).getLocalName().equals("body")
+			if (!parserContext.getOpenElements().get(1).getLocalName()
+					.equals("body")
 					|| parserContext.getOpenElements().size() == 1
-					|| parserContext.openElementsContain("template")
-					){
-				//ignore the token
-			}
-			else{
+					|| parserContext.openElementsContain("template")) {
+				// ignore the token
+			} else {
 				parserContext.setFlagFramesetOk(false);
 				Element body = parserContext.getOpenElements().get(1);
 				TagToken tagToken = (TagToken) token;
-				for(Attribute att : tagToken.getAttributes()){
-					if (!body.hasAttribute(att.getName())){
+				for (Attribute att : tagToken.getAttributes()) {
+					if (!body.hasAttribute(att.getName())) {
 						body.setAttribute(att.getName(), att.getValue());
 					}
 				}
@@ -171,33 +168,20 @@ public class InBody implements IInsertionMode {
 				&& token.getValue().equals("frameset")) {
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 			if (parserContext.getOpenElements().size() > 1) {
-				Element top = parserContext.getOpenElements().pop();
-				Element secondTop = parserContext.getOpenElements().peek();
-				parserContext.getOpenElements().push(top);
-				if (!secondTop.getNodeName().equals("body")) {
+				ArrayList<Element> openElements = new ArrayList<Element>();
+				openElements.addAll(parserContext.getOpenElements());
+				if (!openElements.get(1).getNodeName().equals("body"))
 					return parserContext;
-				}
-			} else if (parserContext.getOpenElements().size() == 1) {
-				return parserContext;
-			}
-
-			if (!parserContext.isFlagFramesetOk()) {
-				return parserContext;
-			} else {
-				if (parserContext.getOpenElements().size() > 1) {
-					Element top = parserContext.getOpenElements().pop();
+				if (!parserContext.isFlagFramesetOk())
+					return parserContext;
+				openElements.get(0).removeChild(openElements.get(1));
+				while (parserContext.getOpenElements().size() > 1)
 					parserContext.getOpenElements().pop();
-					parserContext.getOpenElements().push(top);
-				}
-				while (parserContext.getOpenElements().size() > 0) {
-					Element top = parserContext.getOpenElements().peek();
-					if (!top.getNodeName().equals("html")) {
-						parserContext.getOpenElements().pop();
-					}
-				}
 				InsertAnHTMLElement.run(parserContext, token);
 				parserContext.setInsertionMode(factory
 						.getInsertionMode(InsertionMode.in_frameset));
+			} else if (parserContext.getOpenElements().size() == 1) {
+				return parserContext;
 			}
 		}
 		/*
@@ -381,7 +365,7 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("form")) {
 			if (parserContext.getFormElementPointer() != null
-					&& parserContext.openElementsContain("template")) {
+					&& !parserContext.openElementsContain("template")) {
 				parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 				return parserContext;
 			} else {
@@ -389,8 +373,8 @@ public class InBody implements IInsertionMode {
 					closeApElement(parserContext);
 				}
 				Element element = InsertAnHTMLElement.run(parserContext, token);
-				if (!(!parserContext.getOpenElements().isEmpty() && parserContext
-						.openElementsContain("template"))) {
+				if (!parserContext.getOpenElements().isEmpty()
+						&& !parserContext.openElementsContain("template")) {
 					parserContext.setFormElementPointer(element);
 				}
 			}
@@ -628,30 +612,34 @@ public class InBody implements IInsertionMode {
 
 		}
 		/*
-		 * An end tag whose tag name is "form" If there is no template element
-		 * on the stack of open elements, then run these substeps: Let node be
-		 * the element that the form element pointer is set to, or null if it is
-		 * not set to an element. Set the form element pointer to null.
-		 * Otherwise, let node be null. If node is null or if the stack of open
-		 * elements does not have node in scope, then this is a parse error;
-		 * abort these steps and ignore the token. Generate implied end tags. If
-		 * the current node is not node, then this is a parse error. Remove node
-		 * from the stack of open elements. If there is a template element on
-		 * the stack of open elements, then run these substeps instead: If the
-		 * stack of open elements does not have a form element in scope, then
-		 * this is a parse error; abort these steps and ignore the token.
-		 * Generate implied end tags. If the current node is not a form element,
-		 * then this is a parse error. Pop elements from the stack of open
-		 * elements until a form element has been popped from the stack.
+		 * An end tag whose tag name is "form"
+		 * 
+		 * If there is no template element on the stack of open elements, then
+		 * run these substeps:
+		 * 
+		 * 1 Let node be the element that the form element pointer is set to, or
+		 * null if it is not set to an element.
+		 * 
+		 * 2 Set the form element pointer to null. Otherwise, let node be null.
+		 * 
+		 * 3 If node is null or if the stack of open elements does not have node
+		 * in scope, then this is a parse error; abort these steps and ignore
+		 * the token.
+		 * 
+		 * 4 Generate implied end tags.
+		 * 
+		 * 5 If the current node is not node, then this is a parse error.
+		 * 
+		 * 6 Remove node from the stack of open elements.
+		 * 
+		 
 		 */
 		else if (tokenType == TokenType.end_tag
 				&& token.getValue().equals("form")) {
 			if (!parserContext.openElementsContain("template")) {
-				Node node = parserContext.getFormElementPointer() != null ? parserContext
-						.getFormElementPointer() : null;
-				if (parserContext.getFormElementPointer() != null) {
-					parserContext.setFormElementPointer(null);
-				}
+				Node node = parserContext.getFormElementPointer();
+				parserContext.setFormElementPointer(null);
+				
 				if (node == null
 						|| !ElementInScope.isInScope(parserContext,
 								node.getNodeName())) {
@@ -664,9 +652,25 @@ public class InBody implements IInsertionMode {
 					parserContext
 							.addParseErrors(ParseErrorType.UnexpectedToken);
 				}
+				if(openElementStack.indexOf(node) != -1)
 				openElementStack
 						.removeElementAt(openElementStack.indexOf(node));
-			} else {
+			} 
+			/* If there is a template element on the stack of open elements,
+		 * 
+		 * 1 If the stack of open elements does not have a form element in
+		 * scope, then this is a parse error; abort these steps and ignore the
+		 * token.
+		 * 
+		 * 2 Generate implied end tags.
+		 * 
+		 * 3 If the current node is not a form element, then this is a parse
+		 * error.
+		 * 
+		 * 4 Pop elements from the stack of open elements until a form element
+		 * has been popped from the stack.
+		 */
+			else {
 				if (ElementInScope.isInScope(parserContext, "form")) {
 					parserContext
 							.addParseErrors(ParseErrorType.UnexpectedToken);
@@ -999,10 +1003,12 @@ public class InBody implements IInsertionMode {
 		 * A start tag whose tag name is "input" Reconstruct the active
 		 * formatting elements, if any. Insert an HTML element for the token.
 		 * Immediately pop the current node off the stack of open elements.
-		 * Acknowledge the token's self-closing flag, if it is set. If the token
-		 * does not have an attribute with the name "type", or if it does, but
-		 * that attribute's value is not an ASCII case-insensitive match for the
-		 * string "hidden", then: set the frameset-ok flag to "not ok".
+		 * Acknowledge the token's self-closing flag, if it is set.
+		 * 
+		 * If the token does not have an attribute with the name "type", or if
+		 * it does, but that attribute's value is not an ASCII case-insensitive
+		 * match for the string "hidden", then: set the frameset-ok flag to
+		 * "not ok".
 		 */
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("input")) {
@@ -1012,6 +1018,11 @@ public class InBody implements IInsertionMode {
 			InsertAnHTMLElement.run(parserContext, token);
 			parserContext.getOpenElements().pop();
 			((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
+
+			if (!((TagToken) token).hasAttribute(new String[] { "type" })
+					|| !((TagToken) token).getAttribute("type").getValue()
+							.equals("hidden"))
+				parserContext.setFlagFramesetOk(false);
 		}
 		/*
 		 * A start tag whose tag name is one of: "param", "source", "track"
@@ -1054,80 +1065,48 @@ public class InBody implements IInsertionMode {
 			parserContext.setFlagReconsumeToken(true);
 		}
 		/*
-		 * A start tag whose tag name is "isindex" Parse error.
-		 * 
-		 * If there is no template element on the stack of open elements and the
-		 * form element pointer is not null, then ignore the token.
-		 * 
-		 * Otherwise:
-		 * 
-		 * Acknowledge the token's self-closing flag, if it is set.
-		 * 
-		 * Set the frameset-ok flag to "not ok".
-		 * 
-		 * If the stack of open elements has a p element in button scope, then
-		 * close a p element.
-		 * 
-		 * Insert an HTML element for a "form" start tag token with no
-		 * attributes, and, if there is no template element on the stack of open
-		 * elements, set the form element pointer to point to the element
-		 * created.
-		 * 
-		 * If the token has an attribute called "action", set the action
-		 * attribute on the resulting form element to the value of the "action"
-		 * attribute of the token.
-		 * 
-		 * Insert an HTML element for an "hr" start tag token with no
-		 * attributes. Immediately pop the current node off the stack of open
-		 * elements.
-		 * 
-		 * Reconstruct the active formatting elements, if any.
-		 * 
-		 * Insert an HTML element for a "label" start tag token with no
-		 * attributes.
-		 * 
-		 * Insert characters (see below for what they should say).
-		 * 
-		 * Insert an HTML element for an "input" start tag token with all the
-		 * attributes from the "isindex" token except "name", "action", and
-		 * "prompt", and with an attribute named "name" with the value
-		 * "isindex". (This creates an input element with the name attribute set
-		 * to the magic balue "isindex".) Immediately pop the current node off
-		 * the stack of open elements.
-		 * 
-		 * Insert more characters (see below for what they should say).
-		 * 
-		 * Pop the current node (which will be the label element created
-		 * earlier) off the stack of open elements.
-		 * 
-		 * Insert an HTML element for an "hr" start tag token with no
-		 * attributes. Immediately pop the current node off the stack of open
-		 * elements.
-		 * 
-		 * Pop the current node (which will be the form element created earlier)
-		 * off the stack of open elements, and, if there is no template element
-		 * on the stack of open elements, set the form element pointer back to
-		 * null.
-		 * 
-		 * Prompt: If the token has an attribute with the name "prompt", then
-		 * the first stream of characters must be the same string as given in
-		 * that attribute, and the second stream of characters must be empty.
-		 * Otherwise, the two streams of character tokens together should,
-		 * together with the input element, express the equivalent of
-		 * "This is a searchable index. Enter search keywords: (input field)" in
-		 * the user's preferred language.
+		 * A start tag whose tag name is "isindex"
 		 */
+<<<<<<< HEAD
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("isindex")){
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 			if (parserContext.openElementsContain("template") && parserContext.getFormElementPointer() != null) {
 				return parserContext;
 			}else {
+=======
+
+		else if (tokenType == TokenType.start_tag
+				&& token.getValue().equals("isindex")) {
+			/*
+			 * Parse error.
+			 * 
+			 * If there is no template element on the stack of open elements and
+			 * the form element pointer is not null, then ignore the token.
+			 */
+			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
+			if (!parserContext.openElementsContain("template")
+					&& parserContext.getFormElementPointer() != null) {
+				return parserContext;
+				/*
+				 * Otherwise:
+				 */
+			} else {
+				/*
+				 * Acknowledge the token's self-closing flag, if it is set.
+				 * 
+				 * Set the frameset-ok flag to "not ok".
+				 * 
+				 * If the stack of open elements has a p element in button
+				 * scope, then close a p element.
+				 */
+>>>>>>> bfcb5843e4b81fa093aa02b59e864e179e252a76
 				((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
 				parserContext.setFlagFramesetOk(false);
 				if (ElementInScope.isInButtonScope(parserContext, "p")) {
 					closeApElement(parserContext);
 				}
+<<<<<<< HEAD
 				TagToken newToken = new TagToken(TokenType.start_tag, "form");
 				Element newElement = InsertAnHTMLElement.run(parserContext, newToken);
 				if (parserContext.openElementsContain("template")){
@@ -1152,6 +1131,126 @@ public class InBody implements IInsertionMode {
 				}
 				TagToken newLabelToken = new TagToken(TokenType.start_tag, "label");
 				InsertAnHTMLElement.run(parserContext, newLabelToken);
+=======
+				/*
+				 * Insert an HTML element for a "form" start tag token with no
+				 * attributes, and, if there is no template element on the stack
+				 * of open elements, set the form element pointer to point to
+				 * the element created.
+				 */
+				/*
+				 * If the token has an attribute called "action", set the action
+				 * attribute on the resulting form element to the value of the
+				 * "action" attribute of the token.
+				 */
+				TagToken newToken = new TagToken(TokenType.start_tag, "form");
+
+				if (((TagToken) token).hasAttribute(new String[] { "action" })) {
+					newToken.addAttribute("action", ((TagToken) token)
+							.getAttribute("action").getValue());
+				}
+				Element newElement = InsertAnHTMLElement.run(parserContext,
+						newToken);
+				if (!parserContext.openElementsContain("template")) {
+					parserContext.setFormElementPointer(newElement);
+				}
+
+				/*
+				 * Insert an HTML element for an "hr" start tag token with no
+				 * attributes. Immediately pop the current node off the stack of
+				 * open elements.
+				 */
+				TagToken newHrToken = new TagToken(TokenType.start_tag, "hr");
+				InsertAnHTMLElement.run(parserContext, newHrToken);
+				parserContext.getOpenElements().pop();
+
+				/*
+				 * Reconstruct the active formatting elements, if any.
+				 * 
+				 * Insert an HTML element for a "label" start tag token with no
+				 * attributes.
+				 */
+
+				if (!parserContext.getActiveFormattingElements().isEmpty()) {
+					ListOfActiveFormattingElements.reconstruct(parserContext);
+				}
+				TagToken newLabelToken = new TagToken(TokenType.start_tag,
+						"label");
+				InsertAnHTMLElement.run(parserContext, newLabelToken);
+
+				/* Insert characters (see below for what they should say). */
+				if (((TagToken) token).hasAttribute(new String[] { "prompt" }))
+					InsertCharacter.run(parserContext, ((TagToken) token)
+							.getAttribute("prompt").getValue());
+				else
+					InsertCharacter
+							.run(parserContext,
+									"This is a searchable index. Enter search keywords: ");
+				/*
+				 * Insert an HTML element for an "input" start tag token with
+				 * all the attributes from the "isindex" token except "name",
+				 * "action", and "prompt", and with an attribute named "name"
+				 * with the value "isindex". (This creates an input element with
+				 * the name attribute set to the magic balue "isindex".)
+				 * Immediately pop the current node off the stack of open
+				 * elements.
+				 */
+				TagToken newInputToken = new TagToken(TokenType.start_tag,
+						"input");
+				newInputToken.addAttribute("name", "isindex");
+
+				for (Attribute att : ((TagToken) token).getAttributes()) {
+					if (!isOneOf(att.getName(), new String[] { "action",
+							"prompt", "name" }))
+						newInputToken.addAttribute(att.getName(),
+								att.getValue());
+				}
+				InsertAnHTMLElement.run(parserContext, newInputToken);
+				parserContext.getOpenElements().pop();
+
+				/* Insert more characters (see below for what they should say). */
+				// No more add because language is english so message is
+				// complete before the input control
+
+				/*
+				 * Pop the current node (which will be the label element created
+				 * earlier) off the stack of open elements.
+				 */
+				parserContext.getOpenElements().pop();
+				/*
+				 * Insert an HTML element for an "hr" start tag token with no
+				 * attributes. Immediately pop the current node off the stack of
+				 * open elements.
+				 */
+				TagToken anotherNewHrToken = new TagToken(TokenType.start_tag,
+						"hr");
+				InsertAnHTMLElement.run(parserContext, anotherNewHrToken);
+				parserContext.getOpenElements().pop();
+				/*
+				 * Pop the current node (which will be the form element created
+				 * earlier) off the stack of open elements, and, if there is no
+				 * template element on the stack of open elements, set the form
+				 * element pointer back to null.
+				 */
+				parserContext.getOpenElements().pop();
+				if (!parserContext.openElementsContain("template")) {
+					parserContext.setFormElementPointer(null);
+				}
+
+				/*
+				 * Insert characters
+				 * 
+				 * Prompt: If the token has an attribute with the name "prompt",
+				 * then the first stream of characters must be the same string
+				 * as given in that attribute, and the second stream of
+				 * characters must be empty. Otherwise, the two streams of
+				 * character tokens together should, together with the input
+				 * element, express the equivalent of
+				 * "This is a searchable index. Enter search keywords: (input field)"
+				 * in the user's preferred language.
+				 */
+
+>>>>>>> bfcb5843e4b81fa093aa02b59e864e179e252a76
 			}
 		}
 		/*
@@ -1320,11 +1419,11 @@ public class InBody implements IInsertionMode {
 			AdjustMathMLAttributes.run((TagToken) token);
 			AdjustForeignAttributes.run((TagToken) token);
 			InsertForeignElement.run(parserContext, token, Namespace.MathML);
-			if(((TagToken) token).isFlagSelfClosingTag()){
+			if (((TagToken) token).isFlagSelfClosingTag()) {
 				parserContext.getOpenElements().pop();
 				((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
 			}
-			
+
 		}
 		/*
 		 * A start tag whose tag name is "svg" Reconstruct the active formatting
@@ -1344,7 +1443,7 @@ public class InBody implements IInsertionMode {
 			AdjustSVGAttributes.run((TagToken) token);
 			AdjustForeignAttributes.run((TagToken) token);
 			InsertForeignElement.run(parserContext, token, Namespace.SVG);
-			if (((TagToken) token).isFlagAcknowledgeSelfClosingTag()) {
+			if (((TagToken) token).isFlagSelfClosingTag()) {
 				parserContext.getOpenElements().pop();
 				((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
 			}
