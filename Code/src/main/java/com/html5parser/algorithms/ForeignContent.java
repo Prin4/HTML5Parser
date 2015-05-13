@@ -208,7 +208,7 @@ public class ForeignContent {
 			// abort
 			// these steps.
 			if (node.getNodeName().toLowerCase().equals(token.getValue()))
-				parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
+//				parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 			{
 				while (!stack.isEmpty()) {
 					Element e = stack.pop();
@@ -217,7 +217,7 @@ public class ForeignContent {
 				}
 			}
 			// 5 Set node to the previous entry in the stack of open elements.
-			nodeIndex = openElements.size() - 1;
+			nodeIndex -= 1;
 			node = openElements.get(nodeIndex);
 			// 6 If node is not an element in the HTML namespace, return to the
 			// step
