@@ -106,6 +106,7 @@ public class InFrameset implements IInsertionMode {
 				return parserContext;
 			} else {
 				parserContext.getOpenElements().pop();
+				currentNode = parserContext.getCurrentNode().getNodeName();
 			}
 
 			if (!parserContext.isFlagHTMLFragmentParser()

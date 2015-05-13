@@ -381,7 +381,7 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("form")) {
 			if (parserContext.getFormElementPointer() != null
-					&& parserContext.openElementsContain("template")) {
+					&& !parserContext.openElementsContain("template")) {
 				parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 				return parserContext;
 			} else {
@@ -389,8 +389,8 @@ public class InBody implements IInsertionMode {
 					closeApElement(parserContext);
 				}
 				Element element = InsertAnHTMLElement.run(parserContext, token);
-				if (!(!parserContext.getOpenElements().isEmpty() && parserContext
-						.openElementsContain("template"))) {
+				if (!parserContext.getOpenElements().isEmpty() && !parserContext
+						.openElementsContain("template")) {
 					parserContext.setFormElementPointer(element);
 				}
 			}
