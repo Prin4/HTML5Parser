@@ -13,7 +13,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,18 +20,14 @@ import org.w3c.dom.NodeList;
 
 import com.html5parser.classes.InsertionMode;
 import com.html5parser.classes.ParserContext;
-import com.html5parser.classes.Token;
+import com.html5parser.classes.Token.TokenType;
 import com.html5parser.classes.TokenizerContext;
 import com.html5parser.classes.TokenizerState;
-import com.html5parser.classes.Token.TokenType;
 import com.html5parser.classes.token.TagToken;
 import com.html5parser.constants.Namespace;
 import com.html5parser.factories.InsertionModeFactory;
 import com.html5parser.factories.TokenizerStateFactory;
 import com.html5parser.parser.Parser;
-import com.html5parser.parser.StreamPreprocessor;
-import com.html5parser.parser.Tokenizer;
-import com.html5parser.parser.TreeConstructor;
 
 public class ParsingHTMLFragments {
 
@@ -123,7 +118,7 @@ public class ParsingHTMLFragments {
 		}
 
 		// Let root be a new html element with no attributes.
-		Element root = document.createElementNS(Namespace.HTML,"html");
+		Element root = document.createElementNS(Namespace.HTML, "html");
 
 		// Append the element root to the Document node created above.
 		document.appendChild(root);
@@ -161,7 +156,7 @@ public class ParsingHTMLFragments {
 		context.setUserData("startTagToken", startTagToken, null);
 
 		// Reset the parser's insertion mode appropriately.
-		ResetTheInsertionModeAppropriately.Run(newParserContext,context);
+		ResetTheInsertionModeAppropriately.Run(newParserContext, context);
 
 		// Set the parser's form element pointer to the nearest node to the
 		// context element that is a form element (going straight up the
@@ -218,15 +213,15 @@ public class ParsingHTMLFragments {
 		NodeList result = ParsingHTMLFragments.run(parserContext, context,
 				input);
 		System.out.println(result.getLength());
-		int size= result.getLength();
-		for (int i = 0; i <size;  i++) {
-			Node node= result.item(i);
+		int size = result.getLength();
+		for (int i = 0; i < size; i++) {
+			Node node = result.item(i);
 			System.out.println(node);
-			Node adopted = doc.importNode(node,true);
+			Node adopted = doc.importNode(node, true);
 			context.appendChild(adopted);
 		}
 		System.out.println(serializeDocument(doc));
-		
+
 		System.out.println(parserContext.getParseErrors());
 	}
 

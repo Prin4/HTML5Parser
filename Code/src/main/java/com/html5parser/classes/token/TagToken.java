@@ -9,7 +9,7 @@ public class TagToken extends Token {
 
 	boolean flagSelfClosingTag = false;
 	boolean flagAcknowledgeSelfClosingTag = false;
-	
+
 	List<Attribute> attributes = new ArrayList<TagToken.Attribute>();
 	Attribute lasttAttribute;
 
@@ -33,25 +33,35 @@ public class TagToken extends Token {
 		return flagAcknowledgeSelfClosingTag;
 	}
 
-	public void setFlagAcknowledgeSelfClosingTag(
-			boolean value) {
+	public void setFlagAcknowledgeSelfClosingTag(boolean value) {
 		this.flagAcknowledgeSelfClosingTag = value;
 	}
-	
-	public Boolean hasAttribute(String[] attributeNames){
-		for(Attribute att : this.attributes)
+
+	public Boolean hasAttribute(String[] attributeNames) {
+		for (Attribute att : this.attributes)
 			for (String s : attributeNames)
-				if (att.equals(s))
+				if (att.getName().equals(s))
 					return true;
 		return false;
 	}
-	
+
+	public Attribute getAttribute(String attributeName) {
+		for (Attribute att : this.attributes)
+			if (att.getName().equals(attributeName))
+				return att;
+		return null;
+	}
+
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
 
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
+	}
+	
+	public void addAttribute(String name, String value) {
+		this.attributes.add(new Attribute(name, value));
 	}
 
 	public Attribute createAttribute(String name) {

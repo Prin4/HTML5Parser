@@ -208,9 +208,8 @@ public class InTable implements IInsertionMode {
 					}
 				if (parserContext.getFormElementPointer() == null
 						&& !isTemplateInStack) {
-					InsertAnHTMLElement.run(parserContext, token);
-					parserContext.setFormElementPointer(parserContext
-							.getCurrentNode());
+					Element e = InsertAnHTMLElement.run(parserContext, token);
+					parserContext.setFormElementPointer(e);
 					parserContext.getOpenElements().pop();
 				}
 				break;

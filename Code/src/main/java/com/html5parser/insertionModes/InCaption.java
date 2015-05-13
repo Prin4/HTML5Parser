@@ -38,6 +38,7 @@ public class InCaption implements IInsertionMode {
 				anythingElse(parserContext);
 				break;
 			}
+			break;
 		case end_tag:
 			switch (token.getValue()) {
 			// An end tag whose tag name is "caption"
@@ -96,6 +97,7 @@ public class InCaption implements IInsertionMode {
 				anythingElse(parserContext);
 				break;
 			}
+			break;
 		default:
 			anythingElse(parserContext);
 			break;

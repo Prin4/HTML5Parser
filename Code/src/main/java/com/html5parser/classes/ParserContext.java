@@ -46,7 +46,7 @@ public class ParserContext {
 	private boolean flagScripting = false;
 	private boolean flagForceQuirks = false;
 	private boolean flagParserPause = false;
-	private boolean flagFramesetOk = false;
+	private boolean flagFramesetOk = true;
 	private boolean flagStopParsing = false;
 	private boolean flagReconsumeToken = false;
 	private boolean flagFosterParenting = false;
