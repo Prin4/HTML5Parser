@@ -612,30 +612,34 @@ public class InBody implements IInsertionMode {
 
 		}
 		/*
-		 * An end tag whose tag name is "form" If there is no template element
-		 * on the stack of open elements, then run these substeps: Let node be
-		 * the element that the form element pointer is set to, or null if it is
-		 * not set to an element. Set the form element pointer to null.
-		 * Otherwise, let node be null. If node is null or if the stack of open
-		 * elements does not have node in scope, then this is a parse error;
-		 * abort these steps and ignore the token. Generate implied end tags. If
-		 * the current node is not node, then this is a parse error. Remove node
-		 * from the stack of open elements. If there is a template element on
-		 * the stack of open elements, then run these substeps instead: If the
-		 * stack of open elements does not have a form element in scope, then
-		 * this is a parse error; abort these steps and ignore the token.
-		 * Generate implied end tags. If the current node is not a form element,
-		 * then this is a parse error. Pop elements from the stack of open
-		 * elements until a form element has been popped from the stack.
+		 * An end tag whose tag name is "form"
+		 * 
+		 * If there is no template element on the stack of open elements, then
+		 * run these substeps:
+		 * 
+		 * 1 Let node be the element that the form element pointer is set to, or
+		 * null if it is not set to an element.
+		 * 
+		 * 2 Set the form element pointer to null. Otherwise, let node be null.
+		 * 
+		 * 3 If node is null or if the stack of open elements does not have node
+		 * in scope, then this is a parse error; abort these steps and ignore
+		 * the token.
+		 * 
+		 * 4 Generate implied end tags.
+		 * 
+		 * 5 If the current node is not node, then this is a parse error.
+		 * 
+		 * 6 Remove node from the stack of open elements.
+		 * 
+		 
 		 */
 		else if (tokenType == TokenType.end_tag
 				&& token.getValue().equals("form")) {
 			if (!parserContext.openElementsContain("template")) {
-				Node node = parserContext.getFormElementPointer() != null ? parserContext
-						.getFormElementPointer() : null;
-				if (parserContext.getFormElementPointer() != null) {
-					parserContext.setFormElementPointer(null);
-				}
+				Node node = parserContext.getFormElementPointer();
+				parserContext.setFormElementPointer(null);
+				
 				if (node == null
 						|| !ElementInScope.isInScope(parserContext,
 								node.getNodeName())) {
@@ -648,9 +652,25 @@ public class InBody implements IInsertionMode {
 					parserContext
 							.addParseErrors(ParseErrorType.UnexpectedToken);
 				}
+				if(openElementStack.indexOf(node) != -1)
 				openElementStack
 						.removeElementAt(openElementStack.indexOf(node));
-			} else {
+			} 
+			/* If there is a template element on the stack of open elements,
+		 * 
+		 * 1 If the stack of open elements does not have a form element in
+		 * scope, then this is a parse error; abort these steps and ignore the
+		 * token.
+		 * 
+		 * 2 Generate implied end tags.
+		 * 
+		 * 3 If the current node is not a form element, then this is a parse
+		 * error.
+		 * 
+		 * 4 Pop elements from the stack of open elements until a form element
+		 * has been popped from the stack.
+		 */
+			else {
 				if (ElementInScope.isInScope(parserContext, "form")) {
 					parserContext
 							.addParseErrors(ParseErrorType.UnexpectedToken);

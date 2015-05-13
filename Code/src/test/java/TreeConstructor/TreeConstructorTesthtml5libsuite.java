@@ -81,7 +81,7 @@ public class TreeConstructorTesthtml5libsuite {
 //				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests12.dat",
 //				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests14.dat",
 //				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests15.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests16.dat",
+				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests16.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests17.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests18.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests19.dat",
