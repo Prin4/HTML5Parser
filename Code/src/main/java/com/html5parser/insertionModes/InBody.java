@@ -1213,7 +1213,6 @@ public class InBody implements IInsertionMode {
 				 * "This is a searchable index. Enter search keywords: (input field)"
 				 * in the user's preferred language.
 				 */
-
 			}
 		}
 		/*
