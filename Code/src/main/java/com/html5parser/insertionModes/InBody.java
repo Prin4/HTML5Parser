@@ -631,15 +631,13 @@ public class InBody implements IInsertionMode {
 		 * 5 If the current node is not node, then this is a parse error.
 		 * 
 		 * 6 Remove node from the stack of open elements.
-		 * 
-		 
 		 */
 		else if (tokenType == TokenType.end_tag
 				&& token.getValue().equals("form")) {
 			if (!parserContext.openElementsContain("template")) {
 				Node node = parserContext.getFormElementPointer();
 				parserContext.setFormElementPointer(null);
-				
+
 				if (node == null
 						|| !ElementInScope.isInScope(parserContext,
 								node.getNodeName())) {
@@ -652,24 +650,25 @@ public class InBody implements IInsertionMode {
 					parserContext
 							.addParseErrors(ParseErrorType.UnexpectedToken);
 				}
-				if(openElementStack.indexOf(node) != -1)
-				openElementStack
-						.removeElementAt(openElementStack.indexOf(node));
-			} 
-			/* If there is a template element on the stack of open elements,
-		 * 
-		 * 1 If the stack of open elements does not have a form element in
-		 * scope, then this is a parse error; abort these steps and ignore the
-		 * token.
-		 * 
-		 * 2 Generate implied end tags.
-		 * 
-		 * 3 If the current node is not a form element, then this is a parse
-		 * error.
-		 * 
-		 * 4 Pop elements from the stack of open elements until a form element
-		 * has been popped from the stack.
-		 */
+				if (openElementStack.indexOf(node) != -1)
+					openElementStack.removeElementAt(openElementStack
+							.indexOf(node));
+			}
+			/*
+			 * If there is a template element on the stack of open elements,
+			 * 
+			 * 1 If the stack of open elements does not have a form element in
+			 * scope, then this is a parse error; abort these steps and ignore
+			 * the token.
+			 * 
+			 * 2 Generate implied end tags.
+			 * 
+			 * 3 If the current node is not a form element, then this is a parse
+			 * error.
+			 * 
+			 * 4 Pop elements from the stack of open elements until a form
+			 * element has been popped from the stack.
+			 */
 			else {
 				if (ElementInScope.isInScope(parserContext, "form")) {
 					parserContext
@@ -1067,7 +1066,6 @@ public class InBody implements IInsertionMode {
 		/*
 		 * A start tag whose tag name is "isindex"
 		 */
-
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("isindex")) {
 			/*
@@ -1097,6 +1095,7 @@ public class InBody implements IInsertionMode {
 				if (ElementInScope.isInButtonScope(parserContext, "p")) {
 					closeApElement(parserContext);
 				}
+
 				/*
 				 * Insert an HTML element for a "form" start tag token with no
 				 * attributes, and, if there is no template element on the stack
