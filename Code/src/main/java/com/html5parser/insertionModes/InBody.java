@@ -1067,15 +1067,6 @@ public class InBody implements IInsertionMode {
 		/*
 		 * A start tag whose tag name is "isindex"
 		 */
-<<<<<<< HEAD
-		else if (tokenType == TokenType.start_tag
-				&& token.getValue().equals("isindex")){
-			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if (parserContext.openElementsContain("template") && parserContext.getFormElementPointer() != null) {
-				return parserContext;
-			}else {
-=======
-
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("isindex")) {
 			/*
@@ -1100,38 +1091,12 @@ public class InBody implements IInsertionMode {
 				 * If the stack of open elements has a p element in button
 				 * scope, then close a p element.
 				 */
->>>>>>> bfcb5843e4b81fa093aa02b59e864e179e252a76
 				((TagToken) token).setFlagAcknowledgeSelfClosingTag(true);
 				parserContext.setFlagFramesetOk(false);
 				if (ElementInScope.isInButtonScope(parserContext, "p")) {
 					closeApElement(parserContext);
 				}
-<<<<<<< HEAD
-				TagToken newToken = new TagToken(TokenType.start_tag, "form");
-				Element newElement = InsertAnHTMLElement.run(parserContext, newToken);
-				if (parserContext.openElementsContain("template")){
-					parserContext.setFormElementPointer(newElement);
-				}
-				List<Attribute> attributes = ((TagToken) token).getAttributes();
-				Attribute actionAttribute = null;
-				for(Attribute attribute: attributes){
-					if (attribute.getName().equals("action")) {
-						actionAttribute = attribute;
-						break;
-					}
-				}
-				if (actionAttribute != null) {
-					newElement.setAttribute("action",actionAttribute.getValue());
-				}
-				TagToken newHrToken = new TagToken(TokenType.start_tag, "hr");
-				InsertAnHTMLElement.run(parserContext, newHrToken);
-				parserContext.getOpenElements().pop();
-				if (!parserContext.getActiveFormattingElements().isEmpty()) {
-					ListOfActiveFormattingElements.reconstruct(parserContext);
-				}
-				TagToken newLabelToken = new TagToken(TokenType.start_tag, "label");
-				InsertAnHTMLElement.run(parserContext, newLabelToken);
-=======
+
 				/*
 				 * Insert an HTML element for a "form" start tag token with no
 				 * attributes, and, if there is no template element on the stack
@@ -1249,8 +1214,6 @@ public class InBody implements IInsertionMode {
 				 * "This is a searchable index. Enter search keywords: (input field)"
 				 * in the user's preferred language.
 				 */
-
->>>>>>> bfcb5843e4b81fa093aa02b59e864e179e252a76
 			}
 		}
 		/*
