@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -104,7 +105,12 @@ public class InBody implements IInsertionMode {
 				TagToken tagToken = (TagToken) token;
 				for (Attribute att : tagToken.getAttributes()) {
 					if (!html.hasAttribute(att.getName())) {
-						html.setAttribute(att.getName(), att.getValue());
+						try {
+							html.setAttribute(att.getName(), att.getValue());
+						} catch (DOMException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -138,9 +144,8 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("body")) {
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if ((parserContext.getOpenElements().size() >1
-					&& !parserContext.getOpenElements().get(1).getLocalName()
-					.equals("body"))
+			if ((parserContext.getOpenElements().size() > 1 && !parserContext
+					.getOpenElements().get(1).getLocalName().equals("body"))
 					|| parserContext.getOpenElements().size() == 1
 					|| parserContext.openElementsContain("template")) {
 				// ignore the token
@@ -968,7 +973,9 @@ public class InBody implements IInsertionMode {
 		 */
 		else if (tokenType == TokenType.start_tag
 				&& isOneOf(token.getValue(), new String[] { "table" })) {
-			// TODO
+//			if (!doc.IsInQuirksMode()
+//					&& ElementInScope.isInButtonScope(parserContext, "p"))
+//				closeApElement(parserContext);
 			InsertAnHTMLElement.run(parserContext, token);
 			parserContext.setFlagFramesetOk(false);
 			parserContext.setInsertionMode(factory
