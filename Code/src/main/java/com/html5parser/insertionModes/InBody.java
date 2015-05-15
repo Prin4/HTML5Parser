@@ -57,7 +57,9 @@ public class InBody implements IInsertionMode {
 		 * the active formatting elements, if any. Insert the token's character.
 		 */
 		else if (token.isSpaceCharacter()) {
-			ListOfActiveFormattingElements.reconstruct(parserContext);
+			if (!parserContext.getActiveFormattingElements().isEmpty()) {
+				ListOfActiveFormattingElements.reconstruct(parserContext);
+			}
 			InsertCharacter.run(parserContext, token);
 		}
 		/*
@@ -136,8 +138,9 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("body")) {
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if (!parserContext.getOpenElements().get(1).getLocalName()
-					.equals("body")
+			if ((parserContext.getOpenElements().size() >1
+					&& !parserContext.getOpenElements().get(1).getLocalName()
+					.equals("body"))
 					|| parserContext.getOpenElements().size() == 1
 					|| parserContext.openElementsContain("template")) {
 				// ignore the token
