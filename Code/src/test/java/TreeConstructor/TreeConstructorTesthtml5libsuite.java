@@ -80,8 +80,8 @@ public class TreeConstructorTesthtml5libsuite {
 //				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests11.dat",
 //				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests12.dat",
 //				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests14.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests15.dat",
-				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests16.dat",
+				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests15.dat",
+//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests16.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests17.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests18.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests19.dat",
@@ -148,6 +148,12 @@ public class TreeConstructorTesthtml5libsuite {
 			resource = resource.split("/")[resource.split("/").length - 1];
 			for (int i = 1; i < tests.length; i++) {
 				String test = tests[i];
+				/*
+				 * Omit the tests that have script-off. Check tests16.dat
+				 * */
+				if(test.contains("#script-off"))
+					continue;
+				
 				String testName = i + " (" + resource + ") "
 						+ test.split("\\n")[0]; // i + "";
 				testList.add(new Object[] { testName, test });
