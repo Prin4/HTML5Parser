@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -104,7 +105,12 @@ public class InBody implements IInsertionMode {
 				TagToken tagToken = (TagToken) token;
 				for (Attribute att : tagToken.getAttributes()) {
 					if (!html.hasAttribute(att.getName())) {
-						html.setAttribute(att.getName(), att.getValue());
+						try {
+							html.setAttribute(att.getName(), att.getValue());
+						} catch (DOMException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -138,9 +144,8 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& token.getValue().equals("body")) {
 			parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
-			if ((parserContext.getOpenElements().size() >1
-					&& !parserContext.getOpenElements().get(1).getLocalName()
-					.equals("body"))
+			if ((parserContext.getOpenElements().size() > 1 && !parserContext
+					.getOpenElements().get(1).getLocalName().equals("body"))
 					|| parserContext.getOpenElements().size() == 1
 					|| parserContext.openElementsContain("template")) {
 				// ignore the token
@@ -634,15 +639,13 @@ public class InBody implements IInsertionMode {
 		 * 5 If the current node is not node, then this is a parse error.
 		 * 
 		 * 6 Remove node from the stack of open elements.
-		 * 
-		 
 		 */
 		else if (tokenType == TokenType.end_tag
 				&& token.getValue().equals("form")) {
 			if (!parserContext.openElementsContain("template")) {
 				Node node = parserContext.getFormElementPointer();
 				parserContext.setFormElementPointer(null);
-				
+
 				if (node == null
 						|| !ElementInScope.isInScope(parserContext,
 								node.getNodeName())) {
@@ -655,24 +658,25 @@ public class InBody implements IInsertionMode {
 					parserContext
 							.addParseErrors(ParseErrorType.UnexpectedToken);
 				}
-				if(openElementStack.indexOf(node) != -1)
-				openElementStack
-						.removeElementAt(openElementStack.indexOf(node));
-			} 
-			/* If there is a template element on the stack of open elements,
-		 * 
-		 * 1 If the stack of open elements does not have a form element in
-		 * scope, then this is a parse error; abort these steps and ignore the
-		 * token.
-		 * 
-		 * 2 Generate implied end tags.
-		 * 
-		 * 3 If the current node is not a form element, then this is a parse
-		 * error.
-		 * 
-		 * 4 Pop elements from the stack of open elements until a form element
-		 * has been popped from the stack.
-		 */
+				if (openElementStack.indexOf(node) != -1)
+					openElementStack.removeElementAt(openElementStack
+							.indexOf(node));
+			}
+			/*
+			 * If there is a template element on the stack of open elements,
+			 * 
+			 * 1 If the stack of open elements does not have a form element in
+			 * scope, then this is a parse error; abort these steps and ignore
+			 * the token.
+			 * 
+			 * 2 Generate implied end tags.
+			 * 
+			 * 3 If the current node is not a form element, then this is a parse
+			 * error.
+			 * 
+			 * 4 Pop elements from the stack of open elements until a form
+			 * element has been popped from the stack.
+			 */
 			else {
 				if (ElementInScope.isInScope(parserContext, "form")) {
 					parserContext
@@ -969,7 +973,9 @@ public class InBody implements IInsertionMode {
 		 */
 		else if (tokenType == TokenType.start_tag
 				&& isOneOf(token.getValue(), new String[] { "table" })) {
-			// TODO
+//			if (!doc.IsInQuirksMode()
+//					&& ElementInScope.isInButtonScope(parserContext, "p"))
+//				closeApElement(parserContext);
 			InsertAnHTMLElement.run(parserContext, token);
 			parserContext.setFlagFramesetOk(false);
 			parserContext.setInsertionMode(factory
