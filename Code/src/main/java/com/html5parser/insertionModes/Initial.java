@@ -40,8 +40,8 @@ public class Initial implements IInsertionMode {
 			String tagName = thisToken.getValue();
 			String publicIdentifier = thisToken.getPublicIdentifier();
 			String systemIdentifier = thisToken.getSystemIdentifier();
-			if ((tagName.equals("html") || publicIdentifier != null || (systemIdentifier != null && !tagName
-					.equals("about:legacy-compat")))
+			if (tagName != null && ((tagName.equals("html") || publicIdentifier != null || (systemIdentifier != null && !tagName
+					.equals("about:legacy-compat"))))
 					&& !(((tagName.equals("html"))
 							&& publicIdentifier != null
 							&& publicIdentifier
@@ -70,9 +70,7 @@ public class Initial implements IInsertionMode {
 			}
 			Document doc = parserContext.getDocument();
 			DOMImplementation domImpl = doc.getImplementation();
-			DocumentType doctype = domImpl.createDocumentType(token.getValue(),
-					thisToken.getPublicIdentifier(),
-					thisToken.getSystemIdentifier());
+			DocumentType doctype = domImpl.createDocumentType(tagName,publicIdentifier,systemIdentifier);
 			doc.appendChild(doctype);
 			// doc.appendChild(doc.createElement(thisToken.getValue()));
 			InsertionModeFactory factory = InsertionModeFactory.getInstance();

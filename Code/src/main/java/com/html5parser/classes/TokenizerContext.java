@@ -122,7 +122,11 @@ public class TokenizerContext {
 	}
 
 	public String getLatestEmittedStartTag() {
-		return this.emittedStartTags.peek();
+		if (this.emittedStartTags.isEmpty()) {
+			return null;
+		}else{
+			return this.emittedStartTags.peek();
+		}
 	}
 
 	public ASCIICharacter getCurrentASCIICharacter() {
