@@ -212,6 +212,7 @@ public class TreeConstructorTesthtml5libsuite {
 		// System.out.println("*************** " + input);
 		// System.out.println("******Expected " + expected);
 		if (contextElement != null) {
+			System.out.println("*************** Pasing HTML Fragment with Context Element:" + contextElement);
 			Document document = null;
 			ParserContext parserContext = new ParserContext();
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -236,8 +237,8 @@ public class TreeConstructorTesthtml5libsuite {
 					System.out.println(node);
 					Node adopted = document.importNode(node, true);
 					element.appendChild(adopted);
-					process_result(input, element, expected);
 				}
+				process_result(input, element, expected);
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
