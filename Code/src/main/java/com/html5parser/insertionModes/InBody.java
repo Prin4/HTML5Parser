@@ -39,6 +39,8 @@ import com.html5parser.parseError.ParseErrorType;
 
 public class InBody implements IInsertionMode {
 
+	private boolean ignoreNextLFCharToken = false;
+
 	public ParserContext process(ParserContext parserContext) {
 
 		InsertionModeFactory factory = InsertionModeFactory.getInstance();
@@ -58,10 +60,12 @@ public class InBody implements IInsertionMode {
 		 * the active formatting elements, if any. Insert the token's character.
 		 */
 		else if (token.isSpaceCharacter()) {
-			if (!parserContext.getActiveFormattingElements().isEmpty()) {
-				ListOfActiveFormattingElements.reconstruct(parserContext);
+			if((token.getValue().codePointAt(0) != 0x000A || !ignoreNextLFCharToken)){
+				if (!parserContext.getActiveFormattingElements().isEmpty()) {
+					ListOfActiveFormattingElements.reconstruct(parserContext);
+				}
+				InsertCharacter.run(parserContext, token);
 			}
-			InsertCharacter.run(parserContext, token);
 		}
 		/*
 		 * Any other character token Reconstruct the active formatting
@@ -351,14 +355,7 @@ public class InBody implements IInsertionMode {
 				closeApElement(parserContext);
 			}
 			InsertAnHTMLElement.run(parserContext, token);
-			Queue<Token> tokenQueue = parserContext.getTokenizerContext()
-					.getTokens();
-			if (!tokenQueue.isEmpty()) {
-				Token nexToken = tokenQueue.peek();
-				if (nexToken.getValue().equals("LF")) {
-					tokenQueue.poll();
-				}
-			}
+			ignoreNextLFCharToken = true;
 			parserContext.setFlagFramesetOk(false);
 		}
 		/*
@@ -973,9 +970,10 @@ public class InBody implements IInsertionMode {
 		 */
 		else if (tokenType == TokenType.start_tag
 				&& isOneOf(token.getValue(), new String[] { "table" })) {
-//			if (!doc.IsInQuirksMode()
-//					&& ElementInScope.isInButtonScope(parserContext, "p"))
-//				closeApElement(parserContext);
+			if (!parserContext.getDocument().getUserData("quirksmode")
+					.equals("set")
+					&& ElementInScope.isInButtonScope(parserContext, "p"))
+				closeApElement(parserContext);
 			InsertAnHTMLElement.run(parserContext, token);
 			parserContext.setFlagFramesetOk(false);
 			parserContext.setInsertionMode(factory
@@ -1237,13 +1235,7 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& isOneOf(token.getValue(), new String[] { "textarea" })) {
 			InsertAnHTMLElement.run(parserContext, token);
-			Token nextToken = parserContext.getTokenizerContext().getTokens()
-					.peek();
-			if (nextToken != null
-					&& nextToken.getValue().equals(
-							String.valueOf(Character.toChars(0x000A)))) {
-				parserContext.getTokenizerContext().getTokens().poll();
-			}
+			ignoreNextLFCharToken=true;
 			TokenizerStateFactory tokenStateFactory = TokenizerStateFactory
 					.getInstance();
 			parserContext.getTokenizerContext().setNextState(
@@ -1447,6 +1439,11 @@ public class InBody implements IInsertionMode {
 			anyOtherEndTag(parserContext);
 		}
 
+		if (!(tokenType == TokenType.start_tag && isOneOf(token.getValue(),
+				new String[] { "pre", "listing", "textarea" }))) {
+			ignoreNextLFCharToken = false;
+		}
+
 		return parserContext;
 	}
 
@@ -1537,5 +1534,13 @@ public class InBody implements IInsertionMode {
 		if (ElementInScope.isInButtonScope(parserContext, "p")) {
 			closeApElement(parserContext);
 		}
+	}
+
+	public boolean isIgnoreNextLFCharToken() {
+		return ignoreNextLFCharToken;
+	}
+
+	public void setIgnoreNextLFCharToken(boolean ignoreNextLFCharToken) {
+		this.ignoreNextLFCharToken = ignoreNextLFCharToken;
 	}
 }
