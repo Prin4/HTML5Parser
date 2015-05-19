@@ -971,7 +971,7 @@ public class InBody implements IInsertionMode {
 		else if (tokenType == TokenType.start_tag
 				&& isOneOf(token.getValue(), new String[] { "table" })) {
 			if (!parserContext.getDocument().getUserData("quirksmode")
-					.equals("set")
+					.equals("no-quirks mode")
 					&& ElementInScope.isInButtonScope(parserContext, "p"))
 				closeApElement(parserContext);
 			InsertAnHTMLElement.run(parserContext, token);

@@ -70,6 +70,10 @@ public class Initial implements IInsertionMode {
 					)) {
 				parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 			}
+
+			// // set the value of to one of these: "quirks mode",
+			// "limited-quirks mode", "no-quirks mode"
+			// doc.setUserData("quirksmode", "no-quirks mode", null);
 			if (tagName != null && !tagName.isEmpty()) {
 				Document doc = parserContext.getDocument();
 				DOMImplementation domImpl = doc.getImplementation();
