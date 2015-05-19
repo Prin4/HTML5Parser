@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -66,7 +67,7 @@ public class TreeConstructorTesthtml5libsuite {
 		List<Object[]> testList = new ArrayList<Object[]>();
 
 		String[] resources = {
-				
+
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests1.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests2.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests3.dat",
@@ -93,34 +94,32 @@ public class TreeConstructorTesthtml5libsuite {
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests25.dat",
 				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests26.dat",
 
-				
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/adoption01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/adoption02.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/comments01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/doctype01.dat",
-//				//"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/domjs-unsafe.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/entities01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/entities02.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/foreign-fragment.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/html5test-com.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/inbody01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/isindex.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/main-element.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/pending-spec-changes-plain-text-unsafe.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/pending-spec-changes.dat",
-//				//"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/plain-text-unsafe.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/ruby.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/scriptdata01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tables01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/template.dat",
-//
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests_innerHTML_1.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tricky01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/webkit01.dat",
-//				"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/webkit02.dat",
-					
-			}
-		;
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/adoption01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/adoption02.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/comments01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/doctype01.dat",
+		// //"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/domjs-unsafe.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/entities01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/entities02.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/foreign-fragment.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/html5test-com.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/inbody01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/isindex.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/main-element.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/pending-spec-changes-plain-text-unsafe.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/pending-spec-changes.dat",
+		// //"https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/plain-text-unsafe.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/ruby.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/scriptdata01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tables01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/template.dat",
+		//
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tests_innerHTML_1.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/tricky01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/webkit01.dat",
+		// "https://raw.githubusercontent.com/html5lib/html5lib-tests/master/tree-construction/webkit02.dat",
+
+		};
 
 		for (String resource : resources) {
 			testList = addTestFile(testList, resource);
@@ -150,10 +149,10 @@ public class TreeConstructorTesthtml5libsuite {
 				String test = tests[i];
 				/*
 				 * Omit the tests that have script-off. Check tests16.dat
-				 * */
-				if(test.contains("#script-off"))
+				 */
+				if (test.contains("#script-off"))
 					continue;
-				
+
 				String testName = i + " (" + resource + ") "
 						+ test.split("\\n")[0]; // i + "";
 				testList.add(new Object[] { testName, test });
@@ -212,7 +211,9 @@ public class TreeConstructorTesthtml5libsuite {
 		// System.out.println("*************** " + input);
 		// System.out.println("******Expected " + expected);
 		if (contextElement != null) {
-			System.out.println("*************** Pasing HTML Fragment with Context Element:" + contextElement);
+			System.out
+					.println("*************** Pasing HTML Fragment with Context Element:"
+							+ contextElement);
 			Document document = null;
 			ParserContext parserContext = new ParserContext();
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -296,7 +297,19 @@ public class TreeConstructorTesthtml5libsuite {
 			str += "\n| " + indent(ancestors);
 			switch (current.getNodeType()) {
 			case Node.DOCUMENT_TYPE_NODE:
-				str += "<!DOCTYPE " + current.getNodeName() + '>';
+				String publicId = ((DocumentType) current).getPublicId();
+				publicId = publicId == null ? "" : (" \"" + publicId + "\"");
+				String systemId = ((DocumentType) current).getSystemId();
+				if (systemId == null) {
+					if (publicId.isEmpty())
+						systemId = "";
+					else
+						systemId = " \"\"";
+				} else
+					systemId = " \"" + systemId + "\"";
+
+				str += "<!DOCTYPE " + current.getNodeName() + publicId
+						+ systemId + '>';
 				break;
 			case Node.COMMENT_NODE:
 				try {
@@ -332,12 +345,12 @@ public class TreeConstructorTesthtml5libsuite {
 						str += "math ";
 						break;
 					}
-//				if (current.getNamespaceURI() != null
-//						&& current.getLocalName() != null) {
-//					str += current.getLocalName();
-//				} else {
-//					str += current.getNodeName().toLowerCase();
-//				}
+				// if (current.getNamespaceURI() != null
+				// && current.getLocalName() != null) {
+				// str += current.getLocalName();
+				// } else {
+				// str += current.getNodeName().toLowerCase();
+				// }
 				str += current.getNodeName();
 				str += '>';
 				if (parent != current.getParentNode()) {
