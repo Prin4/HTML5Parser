@@ -1,5 +1,6 @@
 package com.html5parser.insertionModes;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -40,8 +41,9 @@ public class Initial implements IInsertionMode {
 			String tagName = thisToken.getValue();
 			String publicIdentifier = thisToken.getPublicIdentifier();
 			String systemIdentifier = thisToken.getSystemIdentifier();
-			if (tagName != null && ((tagName.equals("html") || publicIdentifier != null || (systemIdentifier != null && !tagName
-					.equals("about:legacy-compat"))))
+			if (tagName != null
+					&& ((tagName.equals("html") || publicIdentifier != null || (systemIdentifier != null && !tagName
+							.equals("about:legacy-compat"))))
 					&& !(((tagName.equals("html"))
 							&& publicIdentifier != null
 							&& publicIdentifier
@@ -68,11 +70,22 @@ public class Initial implements IInsertionMode {
 					)) {
 				parserContext.addParseErrors(ParseErrorType.UnexpectedToken);
 			}
-			Document doc = parserContext.getDocument();
-			DOMImplementation domImpl = doc.getImplementation();
-			DocumentType doctype = domImpl.createDocumentType(tagName,publicIdentifier,systemIdentifier);
-			doc.appendChild(doctype);
-			// doc.appendChild(doc.createElement(thisToken.getValue()));
+
+			// // set the value of to one of these: "quirks mode",
+			// "limited-quirks mode", "no-quirks mode"
+			// doc.setUserData("quirksmode", "no-quirks mode", null);
+			if (tagName != null && !tagName.isEmpty()) {
+				Document doc = parserContext.getDocument();
+				DOMImplementation domImpl = doc.getImplementation();
+				try {
+					DocumentType doctype = domImpl.createDocumentType(tagName,
+							publicIdentifier, systemIdentifier);
+					doc.appendChild(doctype);
+				} catch (DOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			InsertionModeFactory factory = InsertionModeFactory.getInstance();
 			parserContext.setInsertionMode(factory
 					.getInsertionMode(InsertionMode.before_html));
