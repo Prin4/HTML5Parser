@@ -74,17 +74,26 @@ public class Initial implements IInsertionMode {
 			// // set the value of to one of these: "quirks mode",
 			// "limited-quirks mode", "no-quirks mode"
 			// doc.setUserData("quirksmode", "no-quirks mode", null);
+			Document doc = parserContext.getDocument();
 			if (tagName != null && !tagName.isEmpty()) {
-				Document doc = parserContext.getDocument();
 				DOMImplementation domImpl = doc.getImplementation();
 				try {
 					DocumentType doctype = domImpl.createDocumentType(tagName,
 							publicIdentifier, systemIdentifier);
 					doc.appendChild(doctype);
 				} catch (DOMException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					String invalidDoctype = "<!DOCTYPE "
+							+ (tagName == null ? "" : tagName)
+							+ (publicIdentifier == null ? ""
+									: (" " + publicIdentifier))
+							+ (systemIdentifier == null ? ""
+									: (" " + systemIdentifier)) + ">";
+					doc.setUserData("invalidDoctype", invalidDoctype, null);
 				}
+			} else {
+				String invalidDoctype = "<!DOCTYPE >";
+				doc.setUserData("invalidDoctype", invalidDoctype, null);
 			}
 			InsertionModeFactory factory = InsertionModeFactory.getInstance();
 			parserContext.setInsertionMode(factory
