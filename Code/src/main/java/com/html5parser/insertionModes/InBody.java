@@ -72,7 +72,9 @@ public class InBody implements IInsertionMode {
 		 * flag to "not ok".
 		 */
 		else if (tokenType == TokenType.character) {
-			ListOfActiveFormattingElements.reconstruct(parserContext);
+			if (!parserContext.getActiveFormattingElements().isEmpty()) {
+				ListOfActiveFormattingElements.reconstruct(parserContext);
+			}
 			InsertCharacter.run(parserContext, token);
 			parserContext.setFlagFramesetOk(false);
 		}
